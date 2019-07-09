@@ -1,0 +1,9 @@
+874a875,882
+> 
+>     # Work around for python venv having VERSION.dll rather than pythonXY.dll
+>     if is_win and 'VERSION.dll' in dlls:
+>         pydll = 'python%d%d.dll' % sys.version_info[:2]
+>         if pydll in PYDYLIB_NAMES:
+>             filename = getfullnameof(pydll)
+>             return filename
+> 
