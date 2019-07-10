@@ -20,6 +20,7 @@ from argparse import Namespace
 
 __version__ = "4.0"
 __flash_help__ = '''
+<p>Modified to suit Speedshield VAM. Original help below: </p>
 <p>This setting is highly dependent on your device!<p>
 <p>
   Details at <a style="color: #004CE5;"
@@ -33,6 +34,7 @@ __flash_help__ = '''
 </ul>
 </p>
 '''
+__title__ = "Speedshield VAM Flash Utility"
 __auto_select__ = "Auto-select"
 __auto_select_explanation__ = "(first port with Espressif device)"
 __supported_baud_rates__ = [9600, 57600, 74880, 115200, 230400, 460800, 921600]
@@ -144,7 +146,7 @@ class FlashConfig:
 
 
 # ---------------------------------------------------------------------------
-class NodeMcuFlasher(wx.Frame):
+class VamFlasher(wx.Frame):
 
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, -1, title, size=(725, 650),
@@ -404,7 +406,7 @@ class MySplashScreen(wx.adv.SplashScreen):
             self._show_main()
 
     def _show_main(self):
-        frame = NodeMcuFlasher(None, "NodeMCU PyFlasher")
+        frame = VamFlasher(None, __title__)
         frame.Show()
         if self.__fc.IsRunning():
             self.Raise()
@@ -416,7 +418,7 @@ class MySplashScreen(wx.adv.SplashScreen):
 class App(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):
         wx.SystemOptions.SetOption("mac.window-plain-transition", 1)
-        self.SetAppName("NodeMCU PyFlasher")
+        self.SetAppName(__title__)
 
         # Create and show the splash screen.  It will then create and
         # show the main frame when it is time to do so.  Normally when
