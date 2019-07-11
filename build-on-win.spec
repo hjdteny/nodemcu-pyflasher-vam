@@ -1,5 +1,7 @@
 # -*- mode: python -*-
 
+from config import EXENAME, VERSION
+
 block_cipher = None
 
 a = Analysis(['nodemcu-pyflasher.py'],
@@ -19,7 +21,7 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='VAM-Flash-Utility-1.0',
+          name='%s-%s' % (EXENAME, VERSION),
           debug=False,
           strip=False,
           upx=True,
