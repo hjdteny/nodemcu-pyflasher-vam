@@ -17,8 +17,9 @@ from esptool import ESPLoader
 from esptool import NotImplementedInROMError
 from esptool import FatalError
 from argparse import Namespace
+from config import *
 
-__version__ = "1.0"
+__version__ = VERSION
 __flash_help__ = '''
 <p>Modified to suit Speedshield VAM. Original help below: </p>
 <p>This setting is highly dependent on your device!<p>
@@ -34,7 +35,7 @@ __flash_help__ = '''
 </ul>
 </p>
 '''
-__title__ = "Speedshield VAM Flash Utility"
+__title__ = TITLE
 __auto_select__ = "Auto-select"
 __auto_select_explanation__ = "(first port with Espressif device)"
 __supported_baud_rates__ = [9600, 57600, 74880, 115200, 230400, 460800, 921600]
@@ -83,8 +84,8 @@ class FlashingThread(threading.Thread):
 
     def run(self):
 
-        def stringify(txt):
-            return "\"%s\"" % txt
+        # def stringify(txt):
+        #     return "\"%s\"" % txt
 
         try:
             command = []
@@ -116,8 +117,8 @@ class FlashingThread(threading.Thread):
                 command.extend(["0x8000", self._config.partition_path])
                 
 
-            if self._config.erase_before_flash:
-                command.append("--erase-all")
+            # if self._config.erase_before_flash:
+            #     command.append("--erase-all")
 
             print("Command: esptool.py %s\n" % " ".join(command))
 
@@ -140,7 +141,7 @@ class FlashingThread(threading.Thread):
 class FlashConfig:
     def __init__(self):
         self.baud = 460800
-        self.erase_before_flash = False
+        # self.erase_before_flash = False
         self.mode = "dio"
         self.firmware_path = None
         self.bootloader_path = None
@@ -157,7 +158,7 @@ class FlashConfig:
             conf.port = data['port']
             conf.baud = data['baud']
             conf.mode = data['mode']
-            conf.erase_before_flash = data['erase']
+            # conf.erase_before_flash = data['erase']
         return conf
 
     def safe(self, file_path):
@@ -165,7 +166,7 @@ class FlashConfig:
             'port': self.port,
             'baud': self.baud,
             'mode': self.mode,
-            'erase': self.erase_before_flash,
+            # 'erase': self.erase_before_flash,
         }
         with open(file_path, 'w') as f:
             json.dump(data, f)
@@ -251,7 +252,7 @@ class VamFlasher(wx.Frame):
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
 
-        fgs = wx.FlexGridSizer(10, 2, 10, 10)
+        fgs = wx.FlexGridSizer(9, 2, 10, 10)
 
         self.choice = wx.Choice(panel, choices=self._get_serial_ports())
         self.choice.Bind(wx.EVT_CHOICE, on_select_port)
@@ -309,20 +310,20 @@ class VamFlasher(wx.Frame):
         add_flash_mode_radio_button(flashmode_boxsizer, 1, "dio", "Dual I/O (DIO)")
         add_flash_mode_radio_button(flashmode_boxsizer, 2, "dout", "Dual Output (DOUT)")
 
-        erase_boxsizer = wx.BoxSizer(wx.HORIZONTAL)
+        # erase_boxsizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        def add_erase_radio_button(sizer, index, erase_before_flash, label, value):
-            style = wx.RB_GROUP if index == 0 else 0
-            radio_button = wx.RadioButton(panel, name="erase-%s" % erase_before_flash, label="%s" % label, style=style)
-            radio_button.Bind(wx.EVT_RADIOBUTTON, on_erase_changed)
-            radio_button.erase = erase_before_flash
-            radio_button.SetValue(value)
-            sizer.Add(radio_button)
-            sizer.AddSpacer(10)
+        # def add_erase_radio_button(sizer, index, erase_before_flash, label, value):
+        #     style = wx.RB_GROUP if index == 0 else 0
+        #     radio_button = wx.RadioButton(panel, name="erase-%s" % erase_before_flash, label="%s" % label, style=style)
+        #     radio_button.Bind(wx.EVT_RADIOBUTTON, on_erase_changed)
+        #     radio_button.erase = erase_before_flash
+        #     radio_button.SetValue(value)
+        #     sizer.Add(radio_button)
+        #     sizer.AddSpacer(10)
 
-        erase = self._config.erase_before_flash
-        add_erase_radio_button(erase_boxsizer, 0, False, "no", erase is False)
-        add_erase_radio_button(erase_boxsizer, 1, True, "yes, wipes all data", erase is True)
+        # erase = self._config.erase_before_flash
+        # add_erase_radio_button(erase_boxsizer, 0, False, "no", erase is False)
+        # add_erase_radio_button(erase_boxsizer, 1, True, "yes, wipes all data", erase is True)
 
         button = wx.Button(panel, -1, "Flash VAM")
         button.Bind(wx.EVT_BUTTON, on_clicked)
@@ -363,7 +364,7 @@ class VamFlasher(wx.Frame):
         flashmode_label_boxsizer.AddStretchSpacer(0)
         flashmode_label_boxsizer.Add(icon, 0, wx.ALIGN_RIGHT, 20)
 
-        erase_label = wx.StaticText(panel, label="Erase flash")
+        # erase_label = wx.StaticText(panel, label="Erase flash")
         console_label = wx.StaticText(panel, label="Console")
 
         fgs.AddMany([
@@ -374,10 +375,10 @@ class VamFlasher(wx.Frame):
                     file_partition_label, (file_partition_picker, 1, wx.EXPAND),
                     baud_label, baud_boxsizer,
                     flashmode_label_boxsizer, flashmode_boxsizer,
-                    erase_label, erase_boxsizer,
+                    # erase_label, erase_boxsizer,
                     (wx.StaticText(panel, label="")), (button, 1, wx.EXPAND),
                     (console_label, 1, wx.EXPAND), (self.console_ctrl, 1, wx.EXPAND)])
-        fgs.AddGrowableRow(9, 1)
+        fgs.AddGrowableRow(8, 1)
         fgs.AddGrowableCol(1, 1)
         hbox.Add(fgs, proportion=2, flag=wx.ALL | wx.EXPAND, border=15)
         panel.SetSizer(hbox)
@@ -412,14 +413,14 @@ class VamFlasher(wx.Frame):
         # File menu
         file_menu = wx.Menu()
         wx.App.SetMacExitMenuItemId(wx.ID_EXIT)
-        exit_item = file_menu.Append(wx.ID_EXIT, "E&xit\tCtrl-Q", "Exit Speedshield Vam Flash Tool")
+        exit_item = file_menu.Append(wx.ID_EXIT, "E&xit\tCtrl-Q", "Exit %s" % __title__)
         exit_item.SetBitmap(images.Exit.GetBitmap())
         self.Bind(wx.EVT_MENU, self._on_exit_app, exit_item)
         self.menuBar.Append(file_menu, "&File")
 
         # Help menu
         help_menu = wx.Menu()
-        help_item = help_menu.Append(wx.ID_ABOUT, '&About Speedshield VAM Flash Tool', 'About')
+        help_item = help_menu.Append(wx.ID_ABOUT, '&About %s' % __title__, 'About')
         self.Bind(wx.EVT_MENU, self._on_help_about, help_item)
         self.menuBar.Append(help_menu, '&Help')
 
