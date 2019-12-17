@@ -105,16 +105,16 @@ class FlashingThread(threading.Thread):
                             "--flash_size", "detect"])
 
             if (self._config.initialOTA_path is not None):
-                command.extend(["0xd000", self._config.initialOTA_path])
+                command.extend(["0xf000", self._config.initialOTA_path])
 
             if (self._config.bootloader_path is not None):
                 command.extend(["0x1000", self._config.bootloader_path])
             
             if (self._config.firmware_path is not None):
-                command.extend(["0x100000", self._config.firmware_path])
+                command.extend(["0x20000", self._config.firmware_path])
                 
             if (self._config.partition_path is not None):
-                command.extend(["0x8000", self._config.partition_path])
+                command.extend(["0xa000", self._config.partition_path])
                 
 
             # if self._config.erase_before_flash:
