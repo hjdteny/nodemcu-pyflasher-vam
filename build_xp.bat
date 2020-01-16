@@ -1,0 +1,1 @@
+pyinstaller --log-level=DEBUG --noconfirm nodemcu-pyflasher.spec
