@@ -82,10 +82,37 @@ class FlashingThread(threading.Thread):
         self._config = config
         
 
+    def erase_region(self):
+        try:
+            command = []
+            if not self._config.port.startswith(__auto_select__):
+                command.append("--port")
+                command.append(self._config.port)
+
+            command.extend([
+                            "--baud", str(self._config.baud),
+                            "--before", "default_reset",
+                            "--after", "no_reset",
+                            "erase_region",
+                            "0x860000", "0x200000"
+            ])
+
+            print("[PRODUCTION] erasing region 'config1 and 2'")
+            print("Command: esptool.py %s\n" % " ".join(command))
+            esptool.main(command)
+
+            # The last line printed by esptool is "Staying in bootloader." -> some indication that the process is
+            # done is needed
+            print("\nRegion successfully erased. ")
+        except Exception as e:
+            self._parent.report_error(e)
+
     def run(self):
 
         # def stringify(txt):
         #     return "\"%s\"" % txt
+
+        self.erase_region()
 
         try:
             command = []
@@ -97,7 +124,7 @@ class FlashingThread(threading.Thread):
             command.extend([ "--chip", "esp32",
                             "--baud", str(self._config.baud),
                             "--before", "default_reset",
-                            "--after", "hard_reset",
+                            "--after", "no_reset",
                             "write_flash",
                             "-z",
                             "--flash_mode", self._config.mode,
@@ -116,7 +143,6 @@ class FlashingThread(threading.Thread):
             if (self._config.partition_path is not None):
                 command.extend(["0xa000", self._config.partition_path])
                 
-
             # if self._config.erase_before_flash:
             #     command.append("--erase-all")
 
